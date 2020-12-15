@@ -1,0 +1,22 @@
+---
+title: "Leaflet"
+author: "ZZ"
+date: "12/14/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r }
+#install.packages("leaflet")
+library(leaflet)
+
+my_map <- leaflet() %>% addTiles() 
+my_map <- my_map %>% addMarkers(lat=40.6895, lng= -74.1744, popup="first time I land in US")
+my_map
+
+```
+
