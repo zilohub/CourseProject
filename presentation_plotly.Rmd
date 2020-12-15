@@ -1,0 +1,42 @@
+---
+title: "presentation_plotly"
+author: "ZZ"
+date: "12/15/2020"
+output:
+  slidy_presentation: default
+  beamer_presentation: default
+  ioslides_presentation: default
+---
+
+###Slide of the 3d graph
+```{r}
+
+library(plotly)
+
+#install.packages("plotly")
+axx <- list(
+  nticks = 5,
+  range = c(-25,70)
+)
+
+axy <- list(
+  nticks = 5,
+  range = c(-25,70)
+)
+
+axz <- list(
+  nticks = 5,
+  range = c(0,50)
+)
+
+x <- 70*(runif(70, 0, 1))
+y <- 55*(runif(70, 0, 1))
+z <- 40*(runif(70, 0, 1))
+
+graph <- plot_ly(x = ~x, y = ~y, z = ~z, type = 'mesh3d') 
+graph <- graph %>% layout(scene = list(xaxis=axx,yaxis=axy,zaxis=axz))
+
+graph
+
+```
+
