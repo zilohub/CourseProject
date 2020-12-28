@@ -1,0 +1,130 @@
+---
+title: "Prediction Assignment"
+author: "ZZ"
+date: "12/10/2020"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+### 1.Exucutive Summary 
+ 
+The goal for this analysis is quantify how well people perform on their using the data from accelerometers on the belt, forearm, arm, and dumbbell of 6 participants.
+
+Given data of 6 participants activities from the accelerometers. 
+Use the training set and other variables to predict with.
+To predict the manner in which they performed in the exercise.
+
+
+### Prep work
+
+
+
+```{r }
+#install.packages("caret")
+#install.packages("RCurl")
+#install.packages("corrplot")
+#install.packages("data.table")
+#install.packages("dplyr")
+
+library("data.table")
+library("dplyr")
+library("caret")
+library("RCurl")
+library("corrplot")
+
+setwd("C:\\Users\\zengzeng.yang\\Documents\\R")
+
+
+testdata <- read.csv("pml-testing.csv", header = TRUE)
+trainingdata <- read.csv("pml-training.csv", header = TRUE)
+
+str(trainingdata)
+str(testdata)
+
+```
+
+```{r}
+
+dim(testdata)
+dim(trainingdata)
+
+```
+
+
+160 variables for both training and data set.
+We need to remove the near zero variance variable or columns that contain N/A missing values
+
+###partition of training data set and cleaning data
+
+```{r}
+
+
+#training <- trainingdata[,colSums(is.na(trainingdata))== 0]
+
+set.seed(32343)
+inTrain <- createDataPartition(trainingdata$classe, p =.7,list = FALSE)
+traindata <- trainingdata[inTrain,]
+testdata <- trainingdata[-inTrain,]
+dim(traindata)
+dim(testdata)
+
+# remove NA value and near zero variance variables
+NZV <- nearZeroVar(traindata)
+traindata <- trainingdata[,-NZV]
+testdata <- testdata[,-NZV]
+dim(traindata)
+dim(testdata)
+
+?sapply
+NAtrain <- sapply(traindata, function(x)mean(is.na(x)))>.9
+NAtest <- sapply(testdata, function(x)mean(is.na(x)))>.9
+
+traindata <- traindata[, NAtrain == F]
+testdata <- testdata[, NAtest == F]
+
+
+dim(traindata)
+dim(testdata)
+
+
+traindata <- traindata[, -(1:5)]
+testdata <- traindata[, -(1:5)]
+
+
+traindata
+
+dim(traindata)
+dim(testdata)
+
+```
+
+```{ r results = 'hide', message = FALSE }
+correlation <- cor(testdata,-49)
+corrplot(correlation, method = "circle")
+
+## Classification Tree Method
+
+trcontrol <- trainControl(method = "cv", number = 5)
+model_CT <- train(classe~., method = "rpart", data = traindata, trControl = trcontrol)
+
+fancyRpartPlot(model_CT$finalModel)
+
+##install.packages("e1071")
+##install.packages("rattle")
+library(rattle)
+
+fancyRpartPlot(model_CT$finalModel)
+
+predict_train <- predict(model_CT, newdata = testdata)
+
+ClassTree <- confusionMatrix(testdata$classe,predict_train)
+
+
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
