@@ -1,0 +1,33 @@
+apppresentation.R 
+========================================================
+author: z
+date: 2021/1/5
+autosize: true
+
+Introduction
+========================================================
+
+Using the this app, you can evaluate three types of distribution type
+
+- Bionomial(incomplete)
+- Normal
+- Exponential
+
+Slide With Code
+========================================================
+
+```{r}
+
+sample(100)
+
+z <- rnorm(133,mean =14, sd =2)
+
+
+```
+
+Slide With Plot
+========================================================
+
+```{r, echo=FALSE}
+plot(z)
+```
